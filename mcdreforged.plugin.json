@@ -1,0 +1,14 @@
+{
+	"id": "welcome_msg",
+	"version": "1.0.0",
+	"name": "welcome_msg",
+	"description": {
+		"en_us": "Send welcome Msg to all player",
+		"zh_cn": "入服欢迎消息"
+	},
+	"dependencies": {
+		"mcdreforged": ">=2.1.0"
+	},
+	"author": "JAs0n",
+    "link": "https://github.com/JAs0n319/Welcome_MSG"
+}
