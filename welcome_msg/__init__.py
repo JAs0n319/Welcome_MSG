@@ -2,66 +2,64 @@ from datetime import datetime
 from mcdreforged.api.all import *
 
 default_config = {
-    "StartDate": "1988-01-01",
-    "N": 8,
-    "NameColor": "§d",
-    "DateColor": "§d",
-    "1": "§f欢迎 ",
-    "2": "*PlayerName*",
-    "3": " §f进入服务器",
-    "4": "*Send*",
-    "5": "§f这是开服的第 ",
-    "6": "*StartDate*",
-    "7": " §f天",
-    "8": "*Send*"
+	'setting': {
+		'StartDate': '1988-01-01',
+		'Tell_Say': {
+			'0': 'Say',
+			'1': 'Tell'
+		}
+	},
+	'text': {
+		'0': '欢迎$PlayerName$进入服务器',
+		'1': '今天是开服的第$Days$天'
+	}
 }
 
-global text
-
-def sendOut(server: ServerInterface,PlayerName):
-	global text
-	if PlayerName != '***Test***':
+def sendMsg(server: ServerInterface,text: str,player: str,num: str):
+	if player == 'Test_Player':
 		server.broadcast(text)
-		text = ''
 	else:
-		server.tell(PlayerName,text)
-		text = ''
-
-def sendMsg(server: ServerInterface,PlayerName):
-	global text
-	text = ''
-	for i in range(1,int(config['N'])+1):
-		k = str(i)
-		if config[k] == '*Send*':
-			sendOut(server,text)
-		elif config[k] == '*StartDate*':
-			if config['StartDate'] != '1988-01-01':
-				StartDate = config['StartDate']
-			else:
-				StartDate = '(NULL)'
-			if StartDate == '(NULL)':
-				text += config['DateColor']
-				text += StartDate
-			else:
-				end = datetime.now()
-				start = datetime.strptime(StartDate,'%Y-%m-%d')
-				dif = end-start
-				text += config['DateColor']
-				text += str(dif.days)
-		elif config[k] == '*PlayerName*':
-			text += config['NameColor']
-			text += PlayerName
+		if config['setting']['Tell_Say'][num] == 'Say':
+			server.say(text)
+		elif config['setting']['Tell_Say'][num] == 'Tell':
+			server.tell(player,text)
 		else:
-			text += config[k]
+			server.say('配置文件错误,请联系管理员修改配置文件')
 
-def on_player_joined(server: PluginServerInterface,player,info):
-	sendMsg(server,player)
+def get_the_days():
+
+	if config['setting']['StartDate'] != '1988-01-01':
+		days = datetime.now() - datetime.strptime(config['setting']['StartDate'],'%Y-%m-%d')
+		return str(days.days)
+
+	else:
+		return '(没有找到有效日期)'
+
+def decodeMsg(server: ServerInterface,player: str):
+
+	for k in range(0,len(config['text'])):
+		text = config['text'][str(k)]
+
+		if text.find('$PlayerName$') != -1:
+			text = text.replace('$PlayerName$',player)
+		if text.find('$Days$') != -1:
+			text = text.replace('$Days$',get_the_days())
+
+		sendMsg(server,text,player,str(k))
+
+def on_player_joined(server: PluginServerInterface,player: str,info: Info):
+	decodeMsg(server,player)
 
 def on_load(server: PluginServerInterface, old):
+
 	global config
-	config = server.load_config_simple('welcome_msg.json',default_config)
-	server.register_help_message('!!joinMsg','展示欢迎消息')
+	global comm
+
+	config = server.load_config_simple('config.json',default_config)
+	comm = '!!joinMsg'
+
+	server.register_help_message(comm,'展示欢迎消息')
 	server.register_command(
-		Literal('!!joinMsg')
-		.runs(lambda src: sendMsg( src.get_server() , '***Test***' ))
+		Literal(comm)
+		.runs(lambda src: decodeMsg(server,'Test_Player'))
 	)
