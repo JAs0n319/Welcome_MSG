@@ -1,9 +1,8 @@
 # Welcome_MSG
 [English](./README.md)
-[中文](./README_zh_cn.md)
 ### 发送欢迎消息
 
-# welcome_msg.json
+## welcome_msg.json
 
 ```
 {
