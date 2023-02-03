@@ -8,7 +8,7 @@
 ```
 {
     "setting": {                          
-        "StartDate": "1988-01-01",        // If don't change will cause error message in text 
+        "StartDate": "1988-01-01",        // Date of Server Open If don't change will cause error message in text 
         "Tell_Say": {                     // msg visiable range
             "0": "Say",                   // Say = All Player
             "1": "Tell"                   // Tell = The Plyer who join
