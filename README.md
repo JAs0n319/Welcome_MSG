@@ -1,9 +1,8 @@
 # Welcome_MSG
-[English](./README.md)
 [中文](./README_zh_cn.md)
 ### Send welcome message to player
 
-# welcome_msg.json
+## welcome_msg.json
 
 ```
 {
